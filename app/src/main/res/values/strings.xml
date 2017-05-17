@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">wNFCard</string>
+    <string name="title_activity_new_card">NewCard</string>
+    <string name="error">Error</string>
+    <string name="success">Success</string>
+    <string name="remove">Remove</string>
+    <string name="inuse">InUse</string>
+    <string name="unuse">UnUse</string>
+    <string name="no_nfc">No NFC found on this device</string>
+    <string name="nfc_disabled">NFC is not enabled. Please go to the wireless settings to enable it.</string>
+    <string name="no_card_info">No card or name.</string>
+    <string name="waiting_card">Waiting for Card ...</string>
+    <string name="card_name">Card Name</string>
+
+</resources>

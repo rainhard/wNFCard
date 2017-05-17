@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.wdh.wnfcard.ScrollLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_recycler_ll"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <RelativeLayout
+        android:id="@+id/card_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/card_id"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/text_margin"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/card_name"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/text_margin"
+            android:layout_toRightOf="@+id/card_id"
+            android:textSize="20dp" />
+
+        <RelativeLayout
+            android:id="@+id/use_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="right">
+
+            <TextView
+                android:id="@+id/use_card"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                android:background="@color/green"
+                android:gravity="center"
+                android:text="@string/unuse"
+                android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                android:textColor="#ffffff"
+                android:textSize="20dp"
+                android:visibility="visible" />
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/del_layout"
+        android:layout_width="80dp"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@+id/card_layout"
+        android:gravity="center"
+        android:background="@color/red"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/del_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/remove"
+            android:textAppearance="@style/TextAppearance.AppCompat.Button"
+            android:textColor="#ffffff"
+            android:textSize="20dp"
+            android:visibility="visible" />
+    </RelativeLayout>
+
+</com.wdh.wnfcard.ScrollLinearLayout>
