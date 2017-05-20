@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.design.widget.FloatingActionButton;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,6 +56,8 @@ public class CardListActivity extends AppCompatActivity {
         if (CardContent.ITEM_MAP.isEmpty())
             CardContent.loadCard(CardListActivity.this);
 
+        Log.i("wNFCard", CardContent.ITEM_MAP.toString());
+
         SharedPreferences sharedPreferences = getSharedPreferences("wNFCard", Context.MODE_PRIVATE);
         mLastCardID = sharedPreferences.getString("CurrentID", "");
         //Log.i("wNFCard", mLastCardID);
@@ -89,10 +92,13 @@ public class CardListActivity extends AppCompatActivity {
         return false;
     }
 
-    public void applyCard(String cardID) throws IOException {
+    public boolean applyCard(String cardID) throws IOException {
         modifyNfcConf(cardID);
-        updateNfcConf();
-        restartNfcService();
+        if (!updateNfcConf())
+            return false;
+
+        if (!restartNfcService())
+            return false;
 
         SharedPreferences sharedPreferences = getSharedPreferences("wNFCard", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -102,6 +108,7 @@ public class CardListActivity extends AppCompatActivity {
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.card_list);
         setupRecyclerView(recyclerView);
+        return true;
     }
 
     public void modifyNfcConf(String cardID) throws IOException {
@@ -173,12 +180,18 @@ public class CardListActivity extends AppCompatActivity {
         FileOutputStream fos = new FileOutputStream(dst);
         fos.write(sb.toString().getBytes());
         fos.close();
+        //Log.i("wNFCard", "modify nfc conf done");
     }
 
     private boolean updateNfcConf() {
-        ShellUtils.CommandResult result = ShellUtils.execCommand("mount", false);
-        if (result.result != 0)
+        ShellUtils.CommandResult result;
+        /*
+        result = ShellUtils.execCommand("mount", false);
+        if (result.result != 0) {
+            Toast.makeText(getApplicationContext(), result.errorMsg,
+                    Toast.LENGTH_LONG).show();
             return false;
+        }
 
         int start_idx = result.successMsg.indexOf("/system");
         if (start_idx == -1)
@@ -190,20 +203,25 @@ public class CardListActivity extends AppCompatActivity {
         if (end_idx == -1)
             return false;
         String options = result.successMsg.substring(start_idx + 1, end_idx);
-
+        */
         String cnf = getCacheDir().getAbsolutePath() + "/libnfc-nxp.conf";
 
         List<String> commands = new ArrayList<>();
         commands.add("mount -o rw,remount /system");
         commands.add("cp " + cnf + " /etc/libnfc-nxp.conf");
         //commands.add("mount -o " + options + ",remount /system");
+        commands.add("mount -o ro,remount /system");
         result = ShellUtils.execCommand(commands, true);
 
+        Log.i("wNFCard", "cp " + cnf + " /etc/libnfc-nxp.conf");
         //Log.d("wNFCard", options);
         //Log.d("wNFCard", result.successMsg);
 
         if (result.result == 0)
             return true;
+
+        Toast.makeText(getApplicationContext(), result.errorMsg,
+                Toast.LENGTH_LONG).show();
 
         return false;
     }
@@ -216,6 +234,8 @@ public class CardListActivity extends AppCompatActivity {
         if (result.result == 0)
             return true;
 
+        Toast.makeText(getApplicationContext(), result.errorMsg,
+                Toast.LENGTH_LONG).show();
         return false;
     }
 
@@ -293,9 +313,9 @@ public class CardListActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View arg0) {
                         try {
-                            CardListActivity.this.applyCard(mItem.id);
-                            Toast.makeText(getApplicationContext(), R.string.success,
-                                    Toast.LENGTH_SHORT).show();
+                            if (CardListActivity.this.applyCard(mItem.id))
+                                Toast.makeText(getApplicationContext(), R.string.success,
+                                        Toast.LENGTH_SHORT).show();
                         } catch (IOException e) {
                             Toast.makeText(getApplicationContext(), e.toString(),
                                     Toast.LENGTH_LONG).show();
